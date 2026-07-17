@@ -14,10 +14,14 @@ function showTab(which) {
 tabJoin.addEventListener('click', () => showTab('join'));
 tabCreate.addEventListener('click', () => showTab('create'));
 
+document.getElementById('join-name').value = ComJam.displayName();
+
 joinForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const code = document.getElementById('join-code').value.trim().toUpperCase();
   if (code.length < 4) return ComJam.toast('Enter the 4-letter jam code', 'error');
+  const name = document.getElementById('join-name').value.trim();
+  if (name) ComJam.displayName(name);
   const res = await fetch(`/api/sessions/${code}`);
   if (!res.ok) return ComJam.toast(`No jam found with code ${code}`, 'error');
   location.href = `/s/${code}`;

@@ -145,13 +145,13 @@ function renderNowPlaying() {
     );
   }
 
-  holder.append(
+  holder.append(...[
     el('div', { class: 'label' }, el('span', { class: 'live-dot' }), 'Now singing'),
     el('h2', { text: song.title }),
     song.requestedBy ? el('div', { class: 'sub', text: `requested by ${song.requestedBy}` }) : null,
     el('div', { class: 'sub', text: `♥ ${song.votes.length} votes` }),
     actions
-  );
+  ].filter(Boolean));
 }
 
 function renderQueue() {
@@ -177,7 +177,7 @@ function renderQueue() {
     const card = el('div', { class: `song${i === 0 ? ' top' : ''}` });
     card.style.viewTransitionName = 'song-' + song.id.replace(/[^a-zA-Z0-9]/g, '');
 
-    card.append(
+    card.append(...[
       el('span', { class: 'rank', text: i === 0 ? '👑' : `${i + 1}` }),
       el('div', { class: 'info' },
         el('div', { class: 'title', text: song.title }),
@@ -189,7 +189,7 @@ function renderQueue() {
         title: voted ? 'Remove your vote' : 'Vote for this song',
         onclick: () => socket.emit('song:vote', { songId: song.id })
       }, el('span', { class: 'heart', text: voted ? '♥' : '♡' }), ` ${song.votes.length}`)
-    );
+    ].filter(Boolean));
 
     if (isAdmin) {
       card.append(
@@ -269,18 +269,55 @@ function renderHistory() {
 
 const nameRow = document.getElementById('name-row');
 const nameInput = document.getElementById('name-input');
+const nameEditBtn = document.getElementById('name-edit');
 nameInput.value = ComJam.displayName();
-if (!ComJam.displayName()) nameRow.classList.remove('hidden');
+
+function refreshNameLabel() {
+  const name = ComJam.displayName();
+  nameEditBtn.innerHTML = '';
+  if (name) {
+    nameEditBtn.append('Requesting as ', el('span', { class: 'name', text: name }), ' · edit ✏️');
+  } else {
+    nameEditBtn.textContent = '＋ Add your name so folks know who asked (optional)';
+  }
+}
+refreshNameLabel();
+
+nameEditBtn.addEventListener('click', () => {
+  const opening = nameRow.classList.toggle('hidden') === false;
+  if (opening) {
+    nameInput.value = ComJam.displayName();
+    nameInput.focus();
+  }
+});
+
+function commitName() {
+  ComJam.displayName(nameInput.value.trim());
+  refreshNameLabel();
+}
+
+function finishNameEdit() {
+  commitName();
+  nameRow.classList.add('hidden');
+  socket.emit('name:update', { name: ComJam.displayName() });
+}
+
+nameInput.addEventListener('input', commitName);
+nameInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    nameInput.blur();
+  }
+});
+nameInput.addEventListener('blur', finishNameEdit);
 
 document.getElementById('request-form').addEventListener('submit', (e) => {
   e.preventDefault();
   const input = document.getElementById('song-input');
   const title = input.value.trim();
   if (!title) return toast('Type a song name first', 'error');
-  if (nameInput.value.trim()) ComJam.displayName(nameInput.value.trim());
   socket.emit('song:request', { title, requestedBy: ComJam.displayName() });
   input.value = '';
-  nameRow.classList.add('hidden');
   input.blur();
 });
 

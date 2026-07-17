@@ -418,14 +418,24 @@ h1, h2, h3 {
 
 .request-row .field { flex: 1; }
 
-.name-row {
-  margin-top: 10px;
+.request-meta {
+  margin-top: 8px;
 }
 
-.name-row .hint {
-  font-size: 0.8rem;
+.request-meta button {
+  font-size: 0.82rem;
   color: var(--faint);
-  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.request-meta button .name {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.name-row {
+  margin-top: 8px;
 }
 
 /* ---------- Queue ---------- */

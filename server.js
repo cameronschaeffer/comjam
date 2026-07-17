@@ -160,6 +160,7 @@ io.on('connection', (socket) => {
     const song = {
       id: crypto.randomUUID(),
       title,
+      requesterId: clientId,
       requestedBy: String(requestedBy || '').trim().slice(0, 40),
       chordsUrl: null,
       chordsStatus: 'pending',
@@ -177,6 +178,19 @@ io.on('connection', (socket) => {
     session.songs.push(song);
     broadcast(session);
     if (!cached) lookupChordsFor(session, song);
+  });
+
+  socket.on('name:update', ({ name }) => {
+    if (!requireSession() || !clientId) return;
+    name = String(name || '').trim().slice(0, 40);
+    let touched = false;
+    for (const song of session.songs) {
+      if (song.requesterId === clientId && song.requestedBy !== name) {
+        song.requestedBy = name;
+        touched = true;
+      }
+    }
+    if (touched) broadcast(session);
   });
 
   socket.on('song:vote', ({ songId }) => {
