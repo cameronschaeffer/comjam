@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0a16" />
+  <title>ComJam</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎸</text></svg>" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="session-header">
+      <div class="session-title">
+        <h1 id="jam-name">…</h1>
+        <div class="session-meta">
+          <span class="pill code-pill" id="jam-code"></span>
+          <span class="pill" id="people-pill">👥 –</span>
+          <span class="pill admin-pill hidden" id="admin-pill">🎛 Host</span>
+        </div>
+      </div>
+      <button class="icon-btn" id="qr-btn" title="Show join QR code">📲</button>
+    </header>
+
+    <section id="now-playing" class="now-playing hidden"></section>
+
+    <section class="card request-card">
+      <form id="request-form">
+        <div class="request-row">
+          <input id="song-input" class="field" placeholder="Request any song…" maxlength="120"
+                 autocomplete="off" enterkeyhint="send" />
+          <button class="btn btn-primary" type="submit">Add</button>
+        </div>
+        <div class="name-row hidden" id="name-row">
+          <div class="hint">Add your name so folks know who asked (optional)</div>
+          <input id="name-input" class="field" placeholder="Your name" maxlength="40" autocomplete="off" />
+        </div>
+      </form>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>🔥 Up next — vote for your favorites</h2>
+        <span class="count" id="queue-count"></span>
+      </div>
+      <div id="queue"></div>
+    </section>
+
+    <section class="history-section">
+      <button class="history-toggle" id="history-toggle">
+        <span>✅ Already sung tonight <span class="count" id="history-count"></span></span>
+        <span class="chev">▼</span>
+      </button>
+      <div id="history-list" class="hidden"></div>
+    </section>
+
+    <footer class="session-footer">
+      <button id="admin-link">Host controls</button>
+      <div>ComJam · make some noise 🎶</div>
+    </footer>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toasts"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/vendor/qrcode.js"></script>
+  <script src="/js/shared.js"></script>
+  <script src="/js/session.js"></script>
+</body>
+</html>
