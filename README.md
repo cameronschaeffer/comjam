@@ -71,6 +71,31 @@ creation, and `/s/CODE/admin` prompts for it directly.)
   update any matching song in the queue. The 🔁 button on a song re-runs the
   search.
 
+## Hosting beyond the local network
+
+By default everyone must be on the same wifi as the laptop. If the venue
+network is locked down (guest isolation, unknown firewall rules), two options:
+
+**Cloudflare tunnel (free, per-night):** keep hosting on the laptop but give
+it a public URL. Phones connect over cell data or any network.
+
+```sh
+brew install cloudflared        # once
+npm start                       # terminal tab 1
+cloudflared tunnel --url http://localhost:3000   # terminal tab 2
+```
+
+Open the printed `https://….trycloudflare.com` URL in the laptop browser and
+start the jam there — the QR code automatically uses the public URL.
+
+**Render (free, always-on URL):** this repo includes a `render.yaml`
+blueprint. On [render.com](https://render.com): New → Blueprint → connect
+this GitHub repo → deploy. You get a permanent URL like
+`https://comjam.onrender.com`. Notes for the free plan: the server sleeps
+after ~15 minutes idle (first visitor waits ~1 minute for wake-up — open it
+before the jam starts), and the `data/` folder is wiped on restarts/deploys,
+so the chord cache and sessions don't persist between nights.
+
 ## Notes
 
 - Sessions and the chord cache persist to the `data/` folder, so a laptop
